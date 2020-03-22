@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <title>语料收录</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="keywords" content="thang,唐卡,唐卡语料">
+    <meta name="description" content="唐卡语料系统">
+    <link rel="stylesheet" th:href="@{/layui/css/layui.css}">
+    <link rel="stylesheet" th:href="@{/css/global.css}">
+</head>
+<body>
+<div th:replace="common/comm :: nav"></div>
+<div class="layui-container" style="margin-top: 15px;">
+    <div class="fly-panel" style="padding: 5px 10px 5px 10px;">
+        <div class="layui-tab layui-tab-brief" lay-filter="docDemoTabBrief">
+            <ul class="layui-tab-title">
+                <li class="layui-this">上传语料文件</li>
+                <li>撰写语料</li>
+                <li>你今天收录的语料</li>
+            </ul>
+            <div class="layui-tab-content">
+                <div id="L_upload" class="layui-tab-item layui-show">
+                    <div class="layui-row layui-col-space15">
+                        <div class="layui-col-md12" style="padding: 10px 250px 10px 250px;">
+                            <form class="layui-form layui-form-pane" lay-filter="formUpload">
+                                <div class="layui-form-item">
+                                    <label class="layui-form-label">语料标题</label>
+                                    <div class="layui-input-block">
+                                        <input name="title" id="title" class="layui-input" type="text" placeholder="请输入标题" autocomplete="off" required>
+                                    </div>
+                                </div>
+                                <div class="layui-form-item">
+                                    <label class="layui-form-label">语料分类</label>
+                                    <div class="layui-input-block">
+                                        <div id="tagselect" class="xm-select-demo"></div>
+                                    </div>
+                                </div>
+
+                                <div class="layui-form-item">
+                                    <label class="layui-form-label">语料来源</label>
+                                    <div class="layui-input-block">
+                                        <input name="source" id="source" class="layui-input" type="text" placeholder="输入来源" autocomplete="off" required>
+                                    </div>
+                                </div>
+                            </form>
+                            <fieldset class="layui-elem-field">
+                                <legend>请选择要上传的语料</legend>
+                                <p id="errorText"></p>
+                                <div class="layui-upload">
+                                    <button class="layui-btn layui-btn-normal" id="choose">选择文件</button>
+                                    <button class="layui-btn"  id="start">开始上传</button>
+                                </div>
+                            </fieldset>
+                            <fieldset class="layui-elem-field">
+                                <legend>提示</legend>
+                                <p style="font-size: 16px;color: red">上传后的文件会自动转换为txt格式,非文本类型数据会丢失！<span style="color: green">但是，系统依旧会保存了你上传的文件原件！</span>
+                                </p>
+                            </fieldset>
+                        </div>
+                    </div>
+                </div>
+                <div id="L_collect" class="layui-tab-item">
+                    <form class="layui-form layui-form-pane" style="padding: 15px 25px 5px 25px;" lay-filter="formCollect">
+                        <div class="layui-row layui-col-space15">
+                            <div class="layui-col-md6">
+                                <div class="layui-form-item">
+                                    <label class="layui-form-label">语料标题</label>
+                                    <div class="layui-input-block">
+                                        <input id="IdTitle" name="title" class="layui-input" type="text" placeholder="请输入" autocomplete="off" lay-verify="required" required>
+                                    </div>
+                                </div>
+                                <div class="layui-form-item">
+                                    <label class="layui-form-label">语料分类</label>
+                                    <div class="layui-input-block">
+                                        <div id="demo1" class="xm-select-demo"></div>
+                                    </div>
+                                </div>
+                                <div class="layui-form-item">
+                                    <label class="layui-form-label">语料来源</label>
+                                    <div class="layui-input-block">
+                                        <input id="IdSource" name="source" class="layui-input" type="text" placeholder="请输入" autocomplete="off" lay-verify="required" required>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="layui-form-item">
+                            <div class="layui-input-block">
+                                <div class="layui-btn-container">
+                                    <button class="layui-btn layui-btn-radius  layui-btn-primary" id="IdQinKong" type="button">清空</button>
+                                    <div class="layui-btn-group">
+                                        <button class="layui-btn layui-btn-normal layui-btn-sm " id="IdBigEdit" type="button" title="放大编辑区">
+                                            <i class="layui-icon layui-icon-screen-full"></i>
+                                        </button>
+                                        <button class="layui-btn layui-btn-sm " id="IdSmallEdit" type="button" title="缩小编辑区">
+                                            <i class="layui-icon layui-icon-screen-restore"></i>
+                                        </button>
+                                    </div>
+                                    <div class="layui-btn-group">
+                                        <button class="layui-btn layui-btn-normal layui-btn-sm " id="IdBigZiTi" type="button" title="放大文字">
+                                            <i class="layui-icon layui-icon-add-circle"></i>
+                                        </button>
+                                        <button class="layui-btn  layui-btn-sm " id="IdSmallZiTi" type="button" title="缩小文字">
+                                            <i class="layui-icon layui-icon-reduce-circle"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="layui-form-item layui-form-text">
+                            <div class="layui-input-block">
+                                <textarea id="IdContent" name="content" required lay-verify="required" placeholder="详细描述" class="layui-textarea fly-editor" style="height: 260px;"></textarea>
+                            </div>
+                        </div>
+
+                        <div class="layui-form-item">
+                            <button type="submit" class="layui-btn" lay-submit="" lay-filter="startCollect">立即收录</button>
+                        </div>
+                    </form>
+                </div>
+                <div id="L_now" class="layui-tab-item">
+                    <table id="T_today" lay-filter="L_today"></table>
+                    <script type="text/html" id="barToday">
+                        <a class="layui-btn layui-btn-xs" lay-event="edit">更新编辑</a>
+                        <a class="layui-btn layui-btn-xs layui-btn-danger" lay-event="del">删除语料</a>
+                    </script>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div th:replace="common/comm :: foot"></div>
+<script th:src="@{/layui/layui.js}"></script>
+<script th:src="@{/layui/xm-select.js}"></script>
+<script th:inline="none">
+    var tagselect = xmSelect.render({
+        el: '#tagselect',
+        filterable: true,
+        toolbar: {
+            show: true,
+            list: [ 'ALL', 'CLEAR','REVERSE']
+        },
+        autoRow: true,
+        paging: true,
+        pageSize: 3,
+        create: function(val, arr){
+            if(arr.length === 0){
+                return {
+                    name: val,
+                    value: val
+                }
+            }
+        },
+        data: [
+            {name: '佛', value: '佛', selected: true},
+            {name: '建筑', value: '建筑'},
+            {name: '菩萨', value: '菩萨'},
+            {name: '金刚', value: '金刚'},
+            {name: '罗汉', value: '罗汉'},
+            {name: '圣像人物', value: '圣像人物'}
+        ]
+    });
+    var demo1 = xmSelect.render({
+        el: '#demo1',
+        filterable: true,
+        toolbar: {
+            show: true,
+            list: [ 'ALL', 'CLEAR','REVERSE']
+        },
+        autoRow: true,
+        paging: true,
+        pageSize: 3,
+        create: function(val, arr){
+            if(arr.length === 0){
+                return {
+                    name: val,
+                    value: val
+                }
+            }
+        },
+        data: [
+            {name: '佛', value: '佛', selected: true},
+            {name: '建筑', value: '建筑'},
+            {name: '菩萨', value: '菩萨'},
+            {name: '金刚', value: '金刚'},
+            {name: '罗汉', value: '罗汉'},
+            {name: '圣像人物', value: '圣像人物'}
+        ]
+    });
+    layui.use(['form','upload','element','table'], function(){
+        var form = layui.form,
+            table = layui.table,
+            $ = layui.jquery,
+            upload = layui.upload,
+            element = layui.element;
+        function exceptionTip(response){
+            var vv = response.responseText;
+            layer.msg(vv, {icon: 2});
+        }
+        //上传
+        var uploadInst= upload.render({
+            elem:'#choose',//选择文件按钮id
+            url:'/func/upload',
+            method:'post',
+            auto:false,
+            accept:'file',
+            acceptMime:'file/*',
+            bindAction:'#start',//上传文件按钮id
+            before:function () {
+                var data = form.val("formUpload");
+                this.data=data;
+            },
+            done:function (res) {//上传成功后回调
+                if (res.code == 0){//上传成功
+                    table.reload('T_today', {
+                        method:'get'
+                    });
+                    layer.msg(res.msg,{icon:1},function() {
+                        // $('#L_upload').removeClass("layui-show");
+                        // $('#L_now').addClass("layui-show");
+                    });
+                    return ;
+                }else{//上传失败
+                    layer.msg(res.msg,{icon:2});
+                    return ;
+                }
+            },
+            error: function(){
+                var errorText = $('#errorText');
+                errorText.html('<span style="color: #FF5722;">上传失败</span> <a class="layui-btn layui-btn-xs demo-reload">重试</a>');
+                errorText.find('.demo-reload').on('click', function(){
+                    uploadInst.upload();
+                });
+            }
+        });
+        //提交
+        form.on('submit(startCollect)', function (data) {
+            $.ajax({
+                url: '/func/collect',
+                data: data.field,
+                type: 'post',
+                dataType: 'json',
+                success: function (res) {
+                    if(res.code == 0){
+                        table.reload('T_today', {
+                            method:'get'
+                        });
+                        layer.msg(res.msg, {icon: 1},function () {
+                            // $('#L_collect').removeClass("layui-show");
+                            // $('#L_now').addClass("layui-show");
+                        });
+                    }else{
+                        layer.msg(res.msg, {icon: 2});
+                    }
+                }
+                ,error:function (response) {
+                    exceptionTip(response);
+                }
+            });
+            return false;
+        });
+        //今天上传语料编辑
+        table.render({
+            elem:'#T_today'
+            ,url:'/func/collect/now/data'
+            ,limit:5
+            ,limits:[5,10,15,20]
+            ,page:true
+            ,cols:[[
+                {field:'originalId',title:'ID', width:'6%',sort:true,fixed:'left'}
+                ,{field: 'title',width:'20%', title: '标题',edit:'txt'}
+                ,{field: 'tags',width:'15%', title: '分类',edit: 'text'}
+                ,{field: 'source',width:'15%', title: '来源',edit: 'text'}
+                ,{field: 'format',width:'7%', title: '格式'}
+                ,{field: 'date',width:'12%', title: '时间'}
+                ,{field: 'state',width:'10%', title: '状态'}
+                ,{fixed: 'right',width:'15%', align:'center', toolbar: '#barToday'}
+            ]]
+        });
+        //工具栏监听
+        table.on('tool(L_today)',function (obj) {
+            var data = obj.data,
+                layEvent = obj.event;
+            if(layEvent === 'del'){
+                layer.confirm('真的删除么?', function(index){
+                    //向服务端发送删除指令
+                    $.ajax({
+                        url:'/func/collect/now/del'
+                        ,type:'delete'
+                        ,data:{originalId:data.originalId}
+                        ,dataType:'json'
+                        ,success:function (res) {
+                            if(res.code==0){
+                                obj.del();
+                                layer.msg(res.msg);
+                                layer.close(index);
+                            }else{
+                                layer.msg(res.msg, {icon: 2});
+                            }
+                        }
+                        ,error:function (response) {
+                            exceptionTip(response);
+                        }
+                    });
+                });
+            }else if(layEvent === 'edit'){
+                if(editItem == 0){
+                    layer.msg("你还没有修改任何内容！",{icon:2});
+                }else{
+                    editItem =0;
+                    $.ajax({
+                        url:'/func/collect/now/edit'
+                        ,type:'put'
+                        ,data:JSON.stringify(data)
+                        ,dataType:'json'
+                        ,contentType: 'application/json;charset=utf-8'
+                        ,success:function (res) {
+                            if(res.code==0){
+                                layer.msg(res.msg);
+                            }else{
+                                layer.msg(res.msg, {icon: 2});
+                            }
+                        }
+                        ,error:function (response) {
+                            exceptionTip(response);
+                        }
+                    });
+                }
+            }
+        });
+        var editItem = 0;
+        //监听单元格编辑
+        table.on('edit(L_today)', function(obj){
+            editItem = 1;
+            var value = obj.value //得到修改后的值
+                ,data = obj.data //得到所在行所有键值
+                ,field = obj.field; //得到字段
+            layer.msg('[ID: '+ data.id +'] ' + field + ' 字段更改为：'+ value);
+        });
+        layui.$('#IdQinKong').on('click', function () {
+            $('#IdContent').val("");
+        });
+        layui.$('#IdBigEdit').on('click',function(){
+            var $comment = $('#IdContent');  //获取结果框
+            $comment.height(  $comment.height() + 50);
+        });
+        layui.$('#IdBigZiTi').on('click',function(){
+            var thisEle = $("#IdContent").css("font-size");
+            var textFontSize = parseFloat(thisEle , 10);
+            var unit = thisEle.slice(-2); //获取单位
+            textFontSize += 2;
+            $("#IdContent").css("font-size",  textFontSize + unit );
+        });
+        layui.$('#IdSmallEdit').on('click',function(){
+            var $comment = $('#IdContent');  //获取结果框
+            if($comment.height() > 0)
+                $comment.height(  $comment.height() - 50);
+        });
+        layui.$('#IdSmallZiTi').on('click',function(){
+            var thisEle = $("#IdContent").css("font-size");
+            var textFontSize = parseFloat(thisEle , 10);
+            var unit = thisEle.slice(-2); //获取单位
+            if(textFontSize > 2)
+                textFontSize -= 2;
+            $("#IdContent").css("font-size",  textFontSize + unit );
+        });
+    });
+</script>
+</body>
+</html>

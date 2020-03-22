@@ -1,0 +1,4 @@
+.wcq-li-menu li{font-size: 18px; color: #008B8B;}
+.wcq-ul-msg{padding: 10px 15px 10px 15px;}
+.wcq-ul-msg li{line-height: 28px; list-style-position:inside;list-style-type:disc;white-space:nowrap;text-overflow: ellipsis;overflow: hidden;font-size: 18px;}
+.wcq-user-ul li{white-space:nowrap;text-overflow: ellipsis;overflow: hidden;}

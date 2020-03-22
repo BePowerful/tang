@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>语料</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="keywords" content="thang,唐卡,唐卡语料">
+    <meta name="description" content="唐卡语料系统">
+    <link rel="stylesheet" th:href="@{/layui/css/layui.css}">
+    <link rel="stylesheet" th:href="@{/css/global.css}">
+</head>
+<body>
+<div th:replace="common/comm :: nav"></div>
+<div class="fly-panel" >
+    <div class="layui-container">
+        <ul class="layui-clear">
+            <li style="padding:20px 50px 5px 100px">
+                <form class="layui-form layui-form-pane" method="post" action="/searchCorpus">
+                    <div class="layui-inline">
+                        <div class="layui-form-item">
+                            <label class="layui-form-label" style="max-width: 100px;">语料检索</label>
+                            <div class="layui-input-inline" style="max-width: 130px;">
+                                <select name="searchKind">
+                                    <option value="1">细语料</option>
+                                    <option value="2">粗语料</option>
+                                    <option value="3">三元组</option>
+                                </select>
+                            </div>
+                            <div class="layui-input-inline" style="min-width:350px;">
+                                <input id="IDsearchContent" name="searchContent" class="layui-input" type="text" placeholder="请输入" autocomplete="off" >
+                            </div>
+                            <div class="layui-input-inline" style="width: auto;">
+                                <button type="submit" class="layui-btn layui-btn-normal" id="IDsearch">
+                                    <i class="layui-icon layui-icon-search"></i>
+                                </button>
+                            </div>
+                            <div class="layui-input-inline" style="padding-right: 10px">
+                                <a class="layui-btn" th:href="@{/func/search}">使用新版查询</a>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </li>
+        </ul>
+    </div>
+</div>
+<div class="layui-container" style="margin-top: 15px;">
+    <div class="layui-row layui-col-space15">
+        <div class="layui-col-md12">
+            <div class="fly-panel">
+                <div class="fly-panel-title">
+                    <div class="layui-form layui-form-pane">
+                        <div class="layui-inline">
+                            <div class="layui-input-inline" style="width: auto;">
+                                <p th:text="|共查询到:${searchResult.size()}条符合条件的语料|">共查询到:10条符合条件的语料</p>
+                            </div>
+                                <div th:if="${searchHow} eq 'Corpus'" class="layui-input-inline" style="width: auto;">
+                                    <input name="ori" title="生语料" type="checkbox" checked="" lay-filter="ori" lay-skin="primary">
+                                </div>
+                                <div th:if="${searchHow} eq 'Corpus'" class="layui-input-inline" style="width: auto;">
+                                    <input name="mat" title="标注语料" type="checkbox"  lay-filter="mat" lay-skin="primary">
+                                </div>
+                        </div>
+                    </div>
+                </div>
+                <ul class="cor-list" th:if="${searchHow} eq 'Corpus'">
+                    <li  th:each="corpusdto :${searchResult}">
+                        <a th:href="@{'/preview/corpus/'+${corpusdto.corpusId}}" target="_blank">
+                            <p class="IdPmat"  th:utext="${corpusdto.cixinContent}" style="background-color: #D3D3D3"></p>
+                            <p class="IdPori"  th:utext="${corpusdto.originalContent}" ></p>
+                        </a>
+                        <div class="cor-list-more">
+                            <span th:text="|上传者:${corpusdto.user.userName}|">上传者:wcq</span>
+                            <span th:text="|上传时间:${#dates.format(corpusdto.corpusDate,'yyyy-MM-dd HH:mm:ss')}|">上传时间:2019.10.12</span>
+                            <span th:if="${corpusdto.originalId} == 0">语料来源:作者输入语料分词结果</span>
+                            <span th:if="${corpusdto.originalId} != 0" th:text="|语料来源《:${corpusdto.source}》|"></span>
+                            <span th:utext="|语料标签:${corpusdto.tags}|"></span>
+                        </div>
+                    </li>
+                </ul>
+                <ul class="cor-list" th:if="${searchHow} eq 'Original'">
+                    <li  th:each="original :${searchResult}">
+                        <a th:href="@{'/preview/original/'+${original.originalId}}" target="_blank">
+                            <p th:utext="${original.title}" ></p>
+                        </a>
+                        <div class="cor-list-more">
+                            <span th:text="|上传者:${original.user.userName}|">上传者:wcq</span>
+                            <span  th:text="|上传时间:${#dates.format(original.originalDate,'yyyy-MM-dd HH:mm:ss')}|">上传时间:2019.10.12</span>
+                            <span th:text="|语料来源:${original.source}|">语料来源:维基百科</span>
+                            <span th:utext="|语料标签:${original.tags}|"></span>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+<div th:replace="common/comm :: foot"></div>
+<script th:src="@{/layui/layui.js}"></script>
+<script>
+    layui.use(['element','form'], function(){
+        var element = layui.element,
+            $ = layui.jquery,
+            form = layui.form;
+        $('.IdPmat').hide();
+        form.on('checkbox(mat)',function(data){
+            var flag = data.elem.checked,
+                p = $('.IdPmat');
+            if(flag){
+                p.show();
+            }else{
+                p.hide();
+            }
+        });
+        form.on('checkbox(ori)',function(data){
+            var flag = data.elem.checked,
+                p = $('.IdPori');
+            if(flag){
+                p.show();
+            }else{
+                p.hide();
+            }
+        });
+    });
+</script>
+</body>
+</html>

@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="utf-8">
+  <title>重置密码</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="keywords" content="thang,唐卡,唐卡语料">
+  <meta name="description" content="唐卡语料系统">
+  <link rel="stylesheet" th:href="@{/layui/css/layui.css}">
+  <link rel="stylesheet" th:href="@{/css/global.css}">
+</head>
+<body>
+<div th:insert="common/comm :: nav"></div>
+<div class="layui-container" style="margin-top: 15px;">
+  <div class="fly-panel fly-panel-user" pad20>
+    <div class="layui-tab layui-tab-brief" lay-filter="user">
+      <ul class="layui-tab-title">
+        <li><a th:href="@{/user/login}">登入</a></li>
+        <li class="layui-this">重置密码</li>
+      </ul>
+      <div class="layui-form layui-tab-content" id="LAY_ucm" style="padding: 20px 0;">
+        <div class="layui-tab-item layui-show">
+          <div class="fly-msg">请重置您的密码</div>
+            <form class="layui-form layui-form-pane">
+              <div class="layui-form-item">
+                <label for="L_pass" class="layui-form-label">新密码</label>
+                <div class="layui-input-inline">
+                  <input type="password" id="L_pass" name="pass" required lay-verify="required" autocomplete="off" class="layui-input">
+                </div>
+                <div class="layui-form-mid layui-word-aux">6到16个字符</div>
+              </div>
+              <div class="layui-form-item">
+                <label for="L_repass" class="layui-form-label">确认密码</label>
+                <div class="layui-input-inline">
+                  <input type="password" id="L_repass" name="repass" required lay-verify="required" autocomplete="off" class="layui-input">
+                </div>
+              </div>
+              <div class="layui-form-item">
+                <button id="btn_sub" class="layui-btn"  lay-filter="reset_btn" lay-submit>提交</button>
+              </div>
+            </form>
+          <div class="fly-error">该重置密码链接已失效，请重新校验您的信息</div>
+          <div class="fly-error">非法链接，请重新校验您的信息</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div th:replace="common/comm :: foot"></div>
+<script th:src="@{/layui/layui.js}"></script>
+<script>
+  layui.use(['form','element'],function () {
+    var form = layui.form
+            ,$ = layui.jquery
+            ,layer = layui.layer;
+    form.on('submit(reset_btn)',function (data) {
+      var p1 = $('#L_pass').val(),
+              p2 = $('#L_repass').val();
+        if(p1 != p2){
+          layer.msg("两次密码不一致！",{icon:2});
+        }else{
+          $.ajax({
+            url:'/user/forget/reset',
+            type:'put',
+            data:JSON.stringify(data.field),
+            contentType: 'application/json;charset=utf-8',
+            success:function (res) {
+              if(res != 1){
+                layer.msg(res.msg,{icon: 1, time: 2000, shade: 0.4},function () {
+                  location.href = '/user/login';
+                });
+              }else{
+                layer.msg(res.msg,{icon:2});
+              }
+            }
+            ,error:function (response) {
+              var vv = response.responseText;
+              layer.msg(vv, {icon: 2, time: 4000, shade: 0.4},function(){
+              });
+            }
+          });
+        }
+      return false;
+    })
+  });
+</script>
+</body>
+</html>

@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE generatorConfiguration
+        PUBLIC "-//mybatis.org//DTD MyBatis Generator Configuration 1.0//EN"
+        "http://mybatis.org/dtd/mybatis-generator-config_1_0.dtd">
+
+<generatorConfiguration>
+    <context id="mysqlgenerator" targetRuntime="MyBatis3">
+<!--        <plugin type="org.mybatis.generator.plugins.RowBoundsPlugin"></plugin>-->
+        <jdbcConnection driverClass="com.mysql.jdbc.Driver"
+                        connectionURL="jdbc:mysql://localhost:3306/tcs"
+                        userId="root"
+                        password="root">
+        </jdbcConnection>
+
+        <javaTypeResolver >
+            <property name="forceBigDecimals" value="false" />
+        </javaTypeResolver>
+
+        <javaModelGenerator targetPackage="com.wcq.tang.model" targetProject="src\main\java">
+            <property name="enableSubPackages" value="true" />
+            <property name="trimStrings" value="true" />
+        </javaModelGenerator>
+
+        <sqlMapGenerator targetPackage="mapper"  targetProject="src\main\resources">
+            <property name="enableSubPackages" value="true" />
+        </sqlMapGenerator>
+
+        <javaClientGenerator type="XMLMAPPER" targetPackage="com.wcq.tang.mapper"  targetProject="src\main\java">
+            <property name="enableSubPackages" value="true" />
+        </javaClientGenerator>
+
+
+       <!-- <table tableName="corpus" domainObjectName="Corpus">
+            <generatedKey column="corpus_id" sqlStatement="MySql" identity="true"/>
+        </table>
+        <table tableName="operation" domainObjectName="Operation">
+            <generatedKey column="operation_id" sqlStatement="MySql" identity="true"/>
+        </table>
+        <table tableName="original" domainObjectName="Original" >
+            <generatedKey column="original_id" sqlStatement="MySql" identity="true"/>
+        </table>
+        <table tableName="threecup" domainObjectName="Threecup" >
+            <generatedKey column="three_id" sqlStatement="MySql" identity="true"/>
+        </table>
+        <table tableName="user" domainObjectName="User" >
+            <generatedKey column="user_id" sqlStatement="MySql" identity="true"/>
+        </table>-->
+        <table tableName="todaythree" domainObjectName="Todaythree" >
+            <generatedKey column="id" sqlStatement="MySql" identity="true"/>
+        </table>
+        <table tableName="threecup" domainObjectName="Threecup" >
+            <generatedKey column="three_id" sqlStatement="MySql" identity="true"/>
+        </table>
+
+
+    </context>
+    <!--mvn -Dmybatis.generator.overwrite=true mybatis-generator:generate-->
+</generatorConfiguration>

@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <title>语料检索</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="keywords" content="thang,唐卡,唐卡语料">
+    <meta name="description" content="唐卡语料系统">
+    <link rel="stylesheet" th:href="@{/layui/css/layui.css}">
+    <link rel="stylesheet" th:href="@{/css/global.css}">
+</head>
+<body>
+<div th:replace="common/comm :: nav"></div>
+<div class="layui-container" style="margin-top: 15px;">
+    <div class="fly-panel" style="min-height: 600px;">
+        <div class="layui-tab layui-tab-brief" lay-filter="docDemoTabBrief">
+            <ul class="layui-tab-title">
+                <li class="layui-this">细语料检索</li>
+                <li>三元组检索</li>
+                <li>粗语料检索</li>
+                <li>待扩展</li>
+            </ul>
+            <div class="layui-tab-content" style="min-height: 200px;">
+                <!--细语料-->
+                <div class="layui-tab-item layui-show">
+                    <form class="layui-form layui-form-pane">
+                        <div class="layui-form-item" style="margin-bottom: 0px;">
+                            <label class="layui-form-label">检索细语料</label>
+                            <div class="layui-input-inline">
+                                <input type="text" name="param" class="layui-input">
+                            </div>
+                            <div class="layui-input-inline">
+                                <button type="submit" class="layui-btn" lay-submit="" lay-filter="search_corpus">查找</button>
+                            </div>
+                        </div>
+                        <div class="layui-form-item" style="margin-bottom: 0px;">
+                            <label class="layui-form-label">模式</label>
+                            <div class="layui-input-block">
+                                <input type="radio" name="model" value="1" title="整词匹配" checked="">
+                                <input type="radio" name="model" value="2" title="模糊匹配">
+                            </div>
+                        </div>
+                    </form>
+                    <script type="text/html" id="toolbarCorpus">
+                    </script>
+                    <table class="layui-hide" id="t_corpus" lay-filter="corpus"></table>
+                </div>
+                <!--三元组-->
+                <div class="layui-tab-item">
+                    <form class="layui-form layui-form-pane">
+                        <div class="layui-form-item" style="margin-bottom: 0px;">
+                            <label class="layui-form-label">检索三元组</label>
+                            <div class="layui-input-inline">
+                                <select name="condition">
+                                    <option value="0" selected="">全部</option>
+                                    <option value="1">主语</option>
+                                    <option value="2">宾语</option>
+                                </select>
+                            </div>
+                            <div class="layui-input-inline">
+                                <input type="text" name="param" class="layui-input">
+                            </div>
+                            <div class="layui-input-inline">
+                                <button type="submit" class="layui-btn" lay-submit="" lay-filter="search_three">查找</button>
+                            </div>
+                        </div>
+                    </form>
+                    <script type="text/html" id="toolbarThree">
+                    </script>
+                    <table class="layui-hide" id="t_three" lay-filter="three"></table>
+                </div>
+                <!--粗语料-->
+                <div class="layui-tab-item">
+                    <form class="layui-form layui-form-pane" lay-filter="oriForm">
+                        <div class="layui-form-item" style="margin-bottom: 0px;">
+                            <label class="layui-form-label">检索粗语料</label>
+                            <div class="layui-input-inline">
+                                <select name="condition" >
+                                    <option value="0" selected="">全部</option>
+                                    <option value="1">文本类型为txt</option>
+                                    <option value="2">文本类型为pdf</option>
+                                    <option value="3">文本类型为xls/xlsx</option>
+                                    <option value="4">文本类型为doc/docx</option>
+                                </select>
+                            </div>
+                            <div class="layui-input-inline">
+                                <input type="text" name="param" class="layui-input">
+                            </div>
+                            <div class="layui-input-inline">
+                                <button type="submit" class="layui-btn" lay-submit="" lay-filter="search_original">查找</button>
+                            </div>
+                        </div>
+                    </form>
+                    <script type="text/html" id="toolbarOriginal">
+                    </script>
+                    <table class="layui-hide" id="t_original" lay-filter="original"></table>
+                    <script type="text/html" id="barOriginal">
+                        <a class="layui-btn layui-btn-xs" lay-event="see">预览</a>
+                    </script>
+                </div>
+                <div class="layui-tab-item">待扩展</div>
+            </div>
+        </div>
+    </div>
+</div>
+<div th:replace="common/comm :: foot"></div>
+<script th:src="@{/layui/layui.js}"></script>
+<script th:inline="none">
+    layui.config({
+        base: '/opTable'
+    }).extend({
+        opTable: '/opTable'
+    }).use(['opTable','element','layer','form','table'], function () {
+        var form = layui.form
+            , layer = layui.layer
+            ,table = layui.table
+            , $=layui.jquery;
+        //细语料
+        var opTable = layui.opTable.render({
+            elem: '#t_corpus'
+            ,id: 't_corpus'
+            ,url: '/search/corpus'
+            ,page:true
+            ,where:{param:'default'}
+            ,toolbar: '#toolbarCorpus'
+            ,defaultToolbar: ['filter']
+            , cols: [[
+                {field: 'corpusId',width:'6%', title: 'ID', sort: true}
+                , {field: 'originalContent',width:'40%', title: '生语料'}
+                , {field: 'cixinContent',width:'54%', title: '标注语料'}
+            ]],
+            //  展开的列从网络加载
+            openNetwork: {
+                openCols: [
+                    {field: 'username', title: '上传者'}
+                    , {field: 'corpusDate', title: '上传时间'}
+                    , {field: 'tags', title: '分类'}
+                    , {field:'source',title:'来源'}
+                ],
+                /**
+                 *
+                 * @param data 当前行数据
+                 * @param success 成功
+                 * @param message 显示异常消息[没有数据 出错 等]
+                 */
+                onNetwork: function (data, success, message) {
+                    // 从网络加载
+                    layui.$.ajax({
+                        type: "get",
+                        url: "/search/corpus/one",
+                        dataType: "json",
+                        data: {corpusId: data.corpusId},
+                        async: true,
+                        success: function (res) {
+                            if (res.code === 0) {
+                                setTimeout(function () {
+                                    if (data.id === 10000) {
+                                        message("加载出错");
+                                    } else {
+                                        success(res.data);
+                                    }
+                                }, 200);
+                            } else {
+                                message("没有数据");
+                            }
+                        },
+                        error: function (err) {
+                            message("加载出错");
+                        }
+                    });
+                }
+            }
+            , onSort: function (obj) {
+                console.log('这是啥？：',obj)
+            }
+            , opOrientation: 'h'
+        });
+        form.on('submit(search_corpus)', function(data){
+            opTable.reload({
+                where:data.field
+            });
+            return false;
+        });
+        //三元组
+        table.render({
+            elem: '#t_three'
+            ,id:'t_three'
+            ,url:'/search/three'
+            ,where:{param:'default'}
+            ,toolbar: '#toolbarThree'
+            ,defaultToolbar: ['filter']
+            ,cols:[[
+                {field:'threeId',title:'ID', width:'6%',sort:true,fixed:'left'}
+                ,{field: 'subject',width:'34%', title: '主语'}
+                ,{field: 'predicate',width:'26%', title: '谓语'}
+                ,{field: 'object',width:'34%', title: '宾语'}
+            ]]
+            ,page: true
+        });
+        form.on('submit(search_three)',function (data) {
+            table.reload('t_three',{where:data.field});
+            return false;
+        });
+        //粗语料
+        console.log("表单取值:")
+        var ori_parm = form.val("oriForm");
+        console.log(ori_parm);
+        table.render({
+            elem:'#t_original'
+            ,id:'t_original'
+            ,url:'/search/original'
+            ,toolbar: '#toolbarOriginal'
+            ,defaultToolbar:['filter']
+            ,where:{param:'default'}
+            ,cols:[[
+                {field:'originalId',title:'ID', width:'6%',sort:true,fixed:'left'}
+                ,{field: 'title',width:'25%', title: '标题'}
+                ,{field: 'tags',width:'17%', title: '分类'}
+                ,{field: 'source',width:'17%', title: '来源'}
+                ,{field: 'format',width:'7%', title: '格式',sort:true}
+                ,{field: 'date',width:'10%', title: '时间'}
+                ,{field: 'username',width:'12%', title: '上传者'}
+                ,{fixed: 'right',width:'6%', align:'center', toolbar: '#barOriginal'}
+            ]]
+            ,page: true
+        });
+        //粗语料查询
+        form.on('submit(search_original)',function (data) {
+            table.reload('t_original',{where:data.field});
+            return false;
+        });
+        //粗语料的预览
+        table.on('tool(original)',function (obj) {
+            var data = obj.data,
+                layEvent = obj.event;
+            if(layEvent === 'see'){
+                $.ajax({
+                    url:'/search/original/yulan',
+                    data:{originalId:data.originalId},
+                    dataType:'json',
+                    type:'get',
+                    success:function (res) {
+                        if(res.code==0){
+                            var content = res.data;
+                            yulan(content);
+                        }else{
+                            layer.msg(res.msg, {icon: 2});
+                        }
+                    },error:function (response) {
+                        exceptionTip(response);
+                    }
+                });
+            }
+        });
+        //方法抽取
+        function exceptionTip(response) {
+            var vv = response.responseText;
+            layer.msg(vv, {icon: 2});
+        }
+        function yulan(content){
+            layer.open({
+                type: 1
+                ,title: '预览'
+                ,shade: false
+                ,area: ['100%', '100%']
+                ,scrollbar: false
+                ,content: '<div class="detail-body" style="margin:20px;">' +
+                    '<p>'+content+'</p>' +
+                    '</div>'
+            });
+        };
+        setTimeout(function () {
+            layui.$('.layui-code-test3').text(layui.$('#layui-code-test3').html())
+        }, 20)
+    });
+</script>
+</body>
+</html>

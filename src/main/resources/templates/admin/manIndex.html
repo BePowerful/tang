@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <title>唐卡语料后台管理系统</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="keywords" content="thang,唐卡,唐卡语料">
+    <meta name="description" content="唐卡语料系统">
+    <link rel="stylesheet" th:href="@{/layui/css/layui.css}">
+</head>
+<body class="layui-layout-body">
+<div class="layui-layout layui-layout-admin">
+    <div th:replace="admin/common :: comm"></div>
+
+    <div class="layui-body" style="background-color: #D3D3D3;">
+        <!-- 内容主体区域 -->
+        <div style="padding: 15px;">
+            <fieldset class="layui-elem-field layui-field-title" style="margin-top: 20px;">
+                <legend>首页管理</legend>
+            </fieldset>
+            <div class="layui-tab layui-tab-brief" lay-filter="docDemoTabBrief">
+                <ul class="layui-tab-title">
+                    <li class="layui-this">网站动态</li>
+                    <li>语料库介绍</li>
+                    <li>关于我们</li>
+                    <li>其它</li>
+                </ul>
+                <div class="layui-tab-content" style="height: 100px;">
+                    <!-- 网站动态信息编辑 -->
+                    <div class="layui-tab-item layui-show">
+                        <table class="layui-hide" id="demo" lay-filter="test_t"></table>
+                        <script type="text/html" id="barDemo">
+                            <a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>
+                            <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
+                        </script>
+                    </div>
+                    <!-- 网站介绍信息编辑 -->
+                    <div class="layui-tab-item">
+                        <form class="layui-form layui-form-pane" lay-filter="introduceForm">
+                            <div class="layui-form-item">
+                                <label for="sys_name" class="layui-form-label">系统名称</label>
+                                <div class="layui-input-inline">
+                                    <input type="text" id="sys_name" name="sysName" required autocomplete="off" class="layui-input">
+                                </div>
+                            </div>
+                            <div class="layui-form-item">
+                                <label for="sys_club" class="layui-form-label">开发团队</label>
+                                <div class="layui-input-inline">
+                                    <input type="text" id="sys_club" name="sysClub" required autocomplete="off" class="layui-input">
+                                </div>
+                            </div>
+                            <div class="layui-form-item">
+                                <label for="sys_func" class="layui-form-label">系统功能</label>
+                                <div class="layui-input-block">
+                                    <input type="text" id="sys_func" name="sysFunc" required autocomplete="off" class="layui-input">
+                                </div>
+                            </div>
+                            <div class="layui-form-item">
+                                <label for="sys_yiyi" class="layui-form-label">系统意义</label>
+                                <div class="layui-input-block">
+                                    <input type="text" id="sys_yiyi" name="sysYiyi" required autocomplete="off" class="layui-input">
+                                </div>
+                            </div>
+                            <div class="layui-form-item">
+                                <label for="sys_shuo" class="layui-form-label">系统说明</label>
+                                <div class="layui-input-block">
+                                    <input type="text" id="sys_shuo" name="sysShuo" required autocomplete="off" class="layui-input">
+                                </div>
+                            </div>
+                            <div class="layui-form-item">
+                                <button class="layui-btn" lay-submit="" lay-filter="btnI">提交修改</button>
+                            </div>
+                        </form>
+                    </div>
+                    <!--关于我们-->
+                    <div class="layui-tab-item">
+                        <form class="layui-form layui-form-pane">
+                            <div class="layui-form-item layui-form-text">
+                                <label class="layui-form-label">关于我们</label>
+                                <div class="layui-input-block">
+                                    <input type="hidden" name="msgId" id="IdMsgIdAbout">
+                                    <textarea placeholder="请输入内容" class="layui-textarea" id="IdAbout" name="msgContent" style="height: 200px;"></textarea>
+                                </div>
+                            </div>
+                            <div class="layui-form-item">
+                                <button class="layui-btn" lay-submit="" lay-filter="btnA">提交修改</button>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="layui-tab-item">内容4</div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <div style="padding: 10px 10px 10px 10px;display:none;" id="IdEdit">
+        <form class="layui-form layui-form-pane">
+            <div class="layui-form-item layui-form-text">
+                <label class="layui-form-label">动态</label>
+                <div class="layui-input-block">
+                    <input type="hidden" name="msgId" id="IdMsgIdEditDT">
+                    <textarea placeholder="请输入内容" class="layui-textarea" id="IdMsgContentEditDT" name="msgContent" style="height: 150px;"></textarea>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <button class="layui-btn" lay-submit="" lay-filter="btnEdit">提交修改</button>
+            </div>
+        </form>
+    </div>
+    <div class="layui-footer">
+        <!-- 底部固定区域 -->
+        © wcq.com
+    </div>
+</div>
+<script th:src="@{/layui/layui.js}"></script>
+<script th:inline="none">
+    layui.use(['laydate', 'laypage', 'layer', 'table','element','form'], function(){
+        var laydate = layui.laydate //日期
+            ,laypage = layui.laypage //分页
+            ,layer = layui.layer //弹层
+            ,table = layui.table //表格
+            ,element = layui.element //元素操作
+            ,$ = layui.jquery,
+            form = layui.form;
+        $('#L_index').addClass("layui-this");
+        function resultFunction(res){
+            if (res.code == 0)
+                layer.msg(res.msg, {icon: 1});
+            else
+                layer.msg(res.msg, {icon: 2});
+        }
+        //编辑网站介绍后提交
+        form.on('submit(btnI)',function (data) {
+            $.ajax({
+                url:'/admin/mangerIndex/updateIntroduce',
+                data: JSON.stringify(data.field),
+                type:'put',
+                dataType:'json',
+                contentType:'application/json;charset=utf-8',
+                success:function(res){
+                    resultFunction(res);
+                }
+                ,error:function (response) {
+                    var vv = response.responseText;
+                    layer.msg(vv, {icon: 2, time: 4000, shade: 0.4},function(){
+                    });
+                }
+            });
+            return false;
+        });
+        //编辑关于我们后提交
+        form.on('submit(btnA)',function (data) {
+            $.ajax({
+                url:'/admin/mangerIndex/updateAbout',
+                data: JSON.stringify(data.field),
+                type:'put',
+                dataType:'json',
+                contentType:'application/json;charset=utf-8',
+                success:function(res){
+                    resultFunction(res);
+                }
+                ,error:function (response) {
+                    var vv = response.responseText;
+                    layer.msg(vv, {icon: 2, time: 4000, shade: 0.4},function(){
+                    });
+                }
+            });
+            return false;
+        });
+
+        //编辑动态信息后执行
+        form.on('submit(btnEdit)',function (data) {
+            $.ajax({
+                url:'/admin/mangerIndex/updateDT',
+                data: JSON.stringify(data.field),
+                type:'put',
+                dataType:'json',
+                contentType:'application/json;charset=utf-8',
+                success:function(res){
+                    resultFunction(res);
+                }
+                ,error:function (response) {
+                    var vv = response.responseText;
+                    layer.msg(vv, {icon: 2, time: 4000, shade: 0.4},function(){
+                    });
+                }
+            });
+            return false;
+        });
+        //管理首页信息异步获取
+        table.render({
+            elem: '#demo'
+            ,title: '网站动态'
+            ,url:'/admin/mangerIndexData'
+            ,cols: [[
+                {field: 'msgId', title: 'ID', width:50},
+                {field: 'msgContent', title: '内容'},
+                {fixed: 'right', width:150, align:'center', toolbar: '#barDemo'}
+                ]]
+            ,done:function (res) {
+                table = res.data;
+                $.get('/admin/mangerAbout',function (res) {
+                    var data = res.data;
+                    $('#IdMsgIdAbout').val(data.msgId)
+                    $('#IdAbout').val(data.msgContent);
+                });
+                $.get('/admin/mangerIntroduce',function (res) {
+                    var data = res.data;
+                    form.val("introduceForm",data);
+                });
+            }
+        });
+        //动态信息编辑管理
+        table.on('tool(test_t)', function(obj){
+            var data = obj.data
+                ,layEvent = obj.event;
+            if(layEvent === 'del'){
+                layer.confirm('真的删除么?',{btn:['确定','取消'],title:'提示'}, function(index){
+                    obj.del();
+                    layer.close(index);
+                    $.ajax({
+                        url:'/admin/manDTdel',
+                        data: JSON.stringify(data),
+                        dataType:'json',
+                        contentType:'application/json;charset=utf-8',
+                        type:'post',
+                        success:function (res) {
+                            resultFunction(res);
+                        }
+                        ,error:function (response) {
+                            var vv = response.responseText;
+                            layer.msg(vv, {icon: 2, time: 4000, shade: 0.4},function(){
+                            });
+                        }
+                    });
+                });
+            } else if(layEvent === 'edit'){
+                $('#IdMsgIdEditDT').val(data.msgId);
+                $('#IdMsgContentEditDT').val(data.msgContent);
+                layer.open({
+                    type:1,
+                    skin: 'layui-layer-rim', //加上边框
+                    area:['650px','300px'],
+                    title: '编辑动态',
+                    content: $('#IdEdit'),
+                    shadeClose: true,
+                    shade: 0 //遮罩透明度
+                });
+            }
+        });
+    });
+</script>
+</body>
+</html>

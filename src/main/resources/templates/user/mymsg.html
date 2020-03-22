@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <title>我的消息</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="keywords" content="thang,唐卡,唐卡语料">
+    <meta name="description" content="唐卡语料系统">
+    <link rel="stylesheet" th:href="@{/layui/css/layui.css}">
+    <link rel="stylesheet" th:href="@{/css/global.css}">
+</head>
+<body>
+<div th:replace="common/comm :: nav"></div>
+<div class="layui-container fly-marginTop fly-user-main">
+    <ul th:replace="common/comm :: userhome"></ul>
+    <div class="fly-panel fly-panel-user" pad20>
+        <div class="layui-tab layui-tab-brief" lay-filter="user" id="LAY_msg" style="margin-top: 15px;">
+            <button class="layui-btn layui-btn-danger" id="LAY_delallmsg">清空全部消息</button>
+            <div  id="LAY_minemsg" style="margin-top: 10px;">
+                <!--<div class="fly-none">您暂时没有最新消息</div>-->
+                <ul class="mine-msg">
+                    <li data-id="123">
+                        <blockquote class="layui-elem-quote">
+                            <a href="/jump?username=Absolutely" target="_blank"></a>看我颜色行事<a target="_blank" href="/jie/8153.html/page/0/#item-1489505778669"><cite>管理员</cite></a>
+                        </blockquote>
+                        <p><span>1小时前</span><a href="javascript:;" class="layui-btn layui-btn-small layui-btn-danger fly-delete">删除</a></p>
+                    </li>
+                    <li data-id="123">
+                        <blockquote class="layui-elem-quote">
+                            系统消息：欢迎使用 唐卡语料库系统
+                        </blockquote>
+                        <p><span>1小时前</span><a href="javascript:;" class="layui-btn layui-btn-small layui-btn-danger fly-delete">删除</a></p>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+<div th:replace="common/comm :: foot"></div>
+<script th:src="@{/layui/layui.js}"></script>
+<script>
+    layui.use(['form','element'],function () {
+        var element = layui.element,
+            $ = layui.jquery;
+        $('#li_mymsg').addClass("layui-this");
+    })
+</script>
+</body>
+</html>

@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <title>我的细语料</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="keywords" content="thang,唐卡,唐卡语料">
+    <meta name="description" content="唐卡语料系统">
+    <link rel="stylesheet" th:href="@{/layui/css/layui.css}">
+    <link rel="stylesheet" th:href="@{/css/global.css}">
+</head>
+<body>
+<div th:replace="common/comm :: nav"></div>
+<div class="layui-container fly-marginTop fly-user-main">
+    <ul th:replace="common/comm :: userhome"></ul>
+    <div class="fly-panel fly-panel-user" pad20>
+            <div class="layui-tab layui-tab-brief" lay-filter="user">
+                <!-- 上边导航 -->
+                <ul class="layui-tab-title" id="LAY_mine">
+                    <li  lay-id="index" class="layui-this" id="L_cor"></li>
+                </ul>
+                <div class="layui-tab-content" style="padding: 20px 0;">
+                    <div class="layui-tab-item layui-show">
+                        <ul class="mine-view jie-row wcq-user-ul" id="ul_cor">
+                        </ul>
+                        <!-- 这里放分页组件 -->
+                        <div id="LAY_page"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+</div>
+<div th:replace="common/comm :: foot"></div>
+<script th:src="@{/layui/layui.js}"></script>
+<script th:inline="none">
+    layui.use(['form','element','laypage'],function () {
+        var element = layui.element,
+            laypage = layui.laypage,
+            $ = layui.jquery;
+        $('#li_mycorpus').addClass("layui-this");
+        function exceptionTip(response){
+            var vv = response.responseText;
+            layer.msg(vv, {icon: 2});
+        };
+        var corSize ;
+        var page = 1;
+        var limit = 10;
+        $.ajax({
+            url:'/user/mycorpus/data'
+            ,data:{page:page,limit:limit}
+            ,type:'get'
+            ,dataType:'json'
+            ,async:false
+            ,success:function (res) {
+                var data = res.data;
+                corSize = res.count;
+                var ul = $('#ul_cor');
+                $('#L_cor').append("<span>"+"我的标记语料("+corSize+"条)"+"</span>");
+                for(var i=0;i<data.length;i++){
+                    var href ='/preview/corpus/'+data[i].corpusId;
+                    ul.append("<li><a class='jie-title' target='_blank' href="+href+">"+data[i].cixinContent+"</a></li>");
+                }
+            }
+            ,error:function (response) {
+                exceptionTip(response);
+            }
+        });
+        //corpus分页
+        laypage.render({
+            elem: 'LAY_page' //注意，这里的 test1 是 ID，不用加 # 号
+            ,count: corSize
+            ,limit:limit
+            ,jump: function(obj, first){
+                page = obj.curr;
+                limit = obj.limit;
+                //首次不执行
+                if(!first){
+                    layui.jquery.ajax({
+                        url:'/user/mycorpus/data'
+                        ,data:{page:page,limit:limit}
+                        ,type:'get'
+                        ,dataType:'json'
+                        ,async:false
+                        ,success:function (res) {
+                            var data = res.data;
+                            corSize = res.count;
+                            var ul = $('#ul_cor');
+                            ul.empty();
+                            for(var i=0;i<data.length;i++){
+                                var href ='/preview/corpus/'+data[i].corpusId;
+                                ul.append("<li>"
+                                    +"<a class='jie-title' target='_blank' href="+href+">"
+                                    +data[i].cixinContent+"</a>"
+                                    +"</li>");
+                            }
+                        }
+                        ,error:function (response) {
+                            exceptionTip(response);
+                        }
+                    });
+                }
+            }
+        });
+    });
+</script>
+</body>
+</html>

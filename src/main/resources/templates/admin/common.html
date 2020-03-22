@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+<div th:fragment="comm">
+    <div class="layui-header">
+        <div class="layui-logo">唐卡语料库后台管理系统</div>
+        <ul class="layui-nav layui-layout-right">
+            <li class="layui-nav-item">
+                <a th:href="@{/user/mycorpus}" th:text="${session.sessionUser.userName}">贤心</a>
+            </li>
+            <li class="layui-nav-item"><a th:href="@{/}">回首页</a></li>
+        </ul>
+    </div>
+
+    <div class="layui-side layui-bg-black">
+        <div class="layui-side-scroll">
+            <ul class="layui-nav layui-nav-tree"  lay-filter="test">
+                <li class="layui-nav-item" id="L_main"><a th:href="@{/admin/main/0}">系统数据</a></li>
+                <li class="layui-nav-item" id="L_index"><a th:href="@{/admin/manageIndex}">首页管理</a></li>
+                <li class="layui-nav-item" id="L_user"><a th:href="@{/admin/manageUser}">用户管理</a></li>
+                <li class="layui-nav-item" id="L_threecup"><a th:href="@{/admin/manageThreecup}">三元组管理</a></li>
+                <li class="layui-nav-item"><a th:href="@{/druid}" target="_blank">数据监控</a></li>
+            </ul>
+        </div>
+    </div>
+</div>
+</body>
+</html>

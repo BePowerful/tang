@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <title>其它设置</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="keywords" content="thang,唐卡,唐卡语料">
+    <meta name="description" content="唐卡语料系统">
+    <link rel="stylesheet" th:href="@{/layui/css/layui.css}">
+    <link rel="stylesheet" th:href="@{/css/global.css}">
+</head>
+<body>
+<div th:replace="common/comm :: nav"></div>
+<div class="layui-container fly-marginTop fly-user-main">
+    <ul th:replace="common/comm :: userhome"></ul>
+    <div class="fly-panel fly-panel-user" pad20>
+        <div class="layui-tab layui-tab-brief" lay-filter="user">
+            <ul class="layui-tab-title" id="LAY_mine">
+                <li class="layui-this" lay-id="info">我的资料</li>
+                <li lay-id="pass">密码</li>
+                <li lay-id="bind">其它</li>
+            </ul>
+            <div class="layui-tab-content" style="padding: 20px 0;">
+                <div class="layui-tab-item layui-show">
+                    <div class="fly-panel">
+                        <div class="fly-panel-title">
+                            我的名片
+                        </div>
+                        <div class="fly-panel-main" th:object="${session.sessionUser}">
+                            <p class="fly-zanzhu" style="background-color: #5FB878;height: 60px;font-size: 20px;padding-top: 22px;">我的编号：<span th:text="*{userId}"></span></p><br>
+                            <p class="fly-zanzhu" style="background-color: #8FBC8F;height: 60px;font-size: 20px;padding-top: 22px;">我的名字：<span th:text="*{userName}">昌平君</span></p><br>
+                            <p class="fly-zanzhu" style="background-color: #2E8B57;height: 60px;font-size: 20px;padding-top: 22px;">我的邮箱：<span th:text="*{email}">1745683786@qq.com</span></p><br>
+                            <p class="fly-zanzhu" style="background-color: #20B2AA;height: 60px;font-size: 20px;padding-top: 22px;">我的角色：<span th:text="*{role} == true ? '管理员':'语料贡献者'">1745683786@qq.com</span></p><br>
+                            <p class="fly-zanzhu" style="height: 60px;font-size: 20px;padding-top: 22px;">其它：<span>暂无</span></p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="layui-form layui-form-pane layui-tab-item">
+                    <form action="/user/repass" method="post">
+                        <div class="layui-form-item">
+                            <label for="L_nowpass" class="layui-form-label">当前密码</label>
+                            <div class="layui-input-inline">
+                                <input type="password" id="L_nowpass" name="nowpass" required lay-verify="required" autocomplete="off" class="layui-input">
+                            </div>
+                        </div>
+                        <div class="layui-form-item">
+                            <label for="L_pass" class="layui-form-label">新密码</label>
+                            <div class="layui-input-inline">
+                                <input type="password" id="L_pass" name="pass" required lay-verify="required" autocomplete="off" class="layui-input">
+                            </div>
+                            <div class="layui-form-mid layui-word-aux">6到16个字符</div>
+                        </div>
+                        <div class="layui-form-item">
+                            <label for="L_repass" class="layui-form-label">确认密码</label>
+                            <div class="layui-input-inline">
+                                <input type="password" id="L_repass" name="repass" required lay-verify="required" autocomplete="off" class="layui-input">
+                            </div>
+                        </div>
+                        <div class="layui-form-item">
+                            <button class="layui-btn" key="set-mine" lay-filter="*" lay-submit>确认修改</button>
+                        </div>
+                    </form>
+                </div>
+
+                <div class="layui-form layui-form-pane layui-tab-item">
+                    其它
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+
+</div>
+<div th:replace="common/comm :: foot"></div>
+<script th:src="@{/layui/layui.js}"></script>
+<script>
+    layui.use(['form','element'],function () {
+        var element = layui.element,
+            $ = layui.jquery;
+        $('#li_otherset').addClass("layui-this");
+    })
+</script>
+</body>
+</html>

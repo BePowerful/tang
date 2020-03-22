@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <title>找回密码</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="keywords" content="thang,唐卡,唐卡语料">
+    <meta name="description" content="唐卡语料系统">
+    <link rel="stylesheet" th:href="@{/layui/css/layui.css}">
+    <link rel="stylesheet" th:href="@{/css/global.css}">
+</head>
+<body>
+<div th:replace="common/comm :: nav"></div>
+<div class="layui-container" style="margin-top: 15px;">
+    <div class="fly-panel fly-panel-user" pad20>
+        <div class="layui-tab layui-tab-brief" lay-filter="user">
+            <ul class="layui-tab-title">
+                <li><a th:href="@{/user/login}">登入</a></li>
+                <li class="layui-this">找回密码</li>
+            </ul>
+            <div class="layui-form layui-tab-content" id="LAY_ucm" style="padding: 20px 0;">
+                <div class="layui-tab-item layui-show">
+                    <div class="fly-msg">用户信息验证</div>
+                    <form class="layui-form layui-form-pane">
+                        <div class="layui-form-item">
+                            <label for="L_email" class="layui-form-label">邮箱</label>
+                            <div class="layui-input-inline">
+                                <input type="text" id="L_email" name="email" required lay-verify="required" autocomplete="off" class="layui-input">
+                            </div>
+                            <div class="layui-input-inline" style="width: auto">
+                                <button class="layui-btn layui-btn-radius  layui-btn-normal layui-btn-disabled" type="button" id="IdGetCode" title="获取验证码">
+                                    <i class="layui-icon layui-icon-vercode"></i>
+                                </button>
+                            </div>
+                            <span class="layui-form-mid" id="codeTip"></span>
+                        </div>
+                        <div class="layui-form-item">
+                            <label for="L_vercode" class="layui-form-label">验证码</label>
+                            <div class="layui-input-inline">
+                                <input type="text" id="L_vercode" name="vercode"  lay-verify="required" placeholder="请输入你收到的验证码" autocomplete="off" class="layui-input">
+                            </div>
+                        </div>
+                        <div class="layui-form-item">
+                            <button class="layui-btn layui-btn-disabled" id="sub" lay-filter="L_sub" lay-submit>提交</button>
+                        </div>
+                    </form>
+                </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div th:replace="common/comm :: foot"></div>
+<script th:src="@{/layui/layui.js}"></script>
+<script>
+    layui.use(['form','element'],function () {
+        var form = layui.form
+            ,$ = layui.jquery
+            ,layer = layui.layer;
+        $('#L_email').change(function () {
+            var va = $('#L_email').val();
+            $.post('/user/forget/isUser',{email:va},function (res) {
+                if(res.code!= 1){
+                    $('#IdGetCode').removeClass("layui-btn-disabled");
+                }else {
+                    layer.msg(res.msg,{icon: 2, time: 2000, shade: 0.4},function () {
+                        location.href = 'reg';
+                    });
+                }
+            });
+        });
+        layui.$('#IdGetCode').on('click',function () {
+            var em = $('#L_email').val();
+            var codeTip=$('#codeTip');
+            var _this = this;
+            $(this).addClass("layui-btn-disabled");
+            layer.msg('验证码发送成功！请注意查收我们的邮件！',{icon: 1, time: 2000, shade: 0.4});
+            $.post('/user/reg/getVercode',{email:em},function (res) {
+                if(res.code!=1){
+                    $('#sub').removeClass("layui-btn-disabled");
+                    sendCode($(codeTip),$(_this));
+                }else{
+                    layer.msg(res.msg,{icon: 2, time: 2000, shade: 0.4});
+                }
+            });
+        });
+        var countdown=60;
+        sendCode=function(codetip,obj){
+            if (countdown == 0) {
+                obj.removeClass("layui-btn-disabled");
+                codetip.hide();
+                countdown = 60;
+                return;
+            }else{
+                obj.addClass("layui-btn-disabled");
+                codetip.show();
+                codetip.html("重新获取验证码(" + countdown + ")");
+                countdown--;
+            }
+            setTimeout(function () {
+                sendCode(codetip,obj)
+            },1000)
+        };
+        form.on('submit(L_sub)',function (data) {
+            $.ajax({
+                url: '/user/forget/sub',
+                type: 'put',
+                dataType: 'json',
+                data:JSON.stringify(data.field),
+                contentType: 'application/json;charset=utf-8',
+                success: function (res) {
+                    if(res.code != 1){
+                        layer.msg(res.msg,{icon: 1, time: 2000, shade: 0.4},function () {
+                            location.href = 'resetpwd';
+                        });
+                    }else{
+                        layer.msg(res.msg,{icon:2});
+                    }
+                }
+                ,error:function (response) {
+                    var vv = response.responseText;
+                    layer.msg(vv, {icon: 2, time: 4000, shade: 0.4},function(){
+                    });
+                }
+            });
+            return false;
+        });
+    })
+</script>
+</body>
+</html>

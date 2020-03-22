@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <title>唐卡语料系统</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="keywords" content="thang,唐卡,唐卡语料">
+    <meta name="description" content="唐卡语料系统">
+    <link rel="stylesheet" th:href="@{/layui/css/layui.css}">
+    <link rel="stylesheet" th:href="@{/css/global.css}">
+</head>
+<body>
+<div th:replace="common/comm :: nav"></div>
+<div class="layui-container" style="margin-top: 15px;">
+    <div class="layui-row layui-col-space15">
+        <div class="layui-col-md12">
+            <div class="fly-panel" style="padding: 0 70px 15px 70px; background-color: #FFFFFF;">
+                <h3 style="height: 40px; line-height: 50px;font-size: 25px;"><i class="layui-icon layui-icon-note" style="font-size: 20px;"></i>网站动态</h3>
+                <hr class="layui-bg-cyan">
+                <blockquote class="layui-elem-quote">
+                    <ul class="fly-panel-main fly-list-static">
+                        <li th:each="dt:${dontai}">
+                            <span th:text="${dt.msgContent}">本网站为唐卡语料库，收录各类唐卡语料。  2019年10月10日</span>
+                        </li>
+                    </ul>
+                </blockquote>
+                <h3 style="height: 40px; line-height: 50px;font-size: 25px;"><i class="layui-icon layui-icon-note" style="font-size: 20px;"></i>系统介绍</h3>
+                <hr class="layui-bg-cyan">
+                <blockquote class="layui-elem-quote">
+                    <ul class="fly-panel-main fly-list-static" >
+                        <li th:text="|系统名称:${introduceDto.sysName}|"></li>
+                        <li th:text="|开发团队:${introduceDto.sysClub}|"></li>
+                        <li th:text="|系统功能:${introduceDto.sysFunc}|"></li>
+                        <li th:text="|系统意义:${introduceDto.sysYiyi}|"></li>
+                        <li th:text="|系统说明:${introduceDto.sysShuo}|"></li>
+                    </ul>
+                </blockquote>
+
+                <h3 style="height: 40px; line-height: 50px;font-size: 25px;"><i class="layui-icon layui-icon-note" style="font-size: 20px;"></i>粗语料与数据清洗</h3>
+                <hr class="layui-bg-cyan">
+                <blockquote class="layui-elem-quote">
+                    <p th:text="${about.msgContent}"></p>
+                </blockquote>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div th:replace="common/comm :: foot"></div>
+
+<script th:src="@{/layui/layui.js}"></script>
+<script>
+    layui.use(['element','form'], function(){
+        var element = layui.element,//导航的hover效果、二级菜单等功能，需要依赖element模块
+            $= layui.jquery;
+    });
+</script>
+</body>
+</html>

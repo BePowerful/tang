@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <title>唐卡语料后台管理系统</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="keywords" content="thang,唐卡,唐卡语料">
+    <meta name="description" content="唐卡语料系统">
+    <link rel="stylesheet" th:href="@{/layui/css/layui.css}">
+    <link rel="stylesheet" th:href="@{/css/wcqadmin.css}">
+</head>
+<body class="layui-layout-body">
+<div class="layui-layout layui-layout-admin">
+    <div th:replace="admin/common :: comm"></div>
+    <div class="layui-body" style="background-color: #D3D3D3;">
+        <div style="padding: 15px;">
+            <!-- 左边 -->
+            <div class="layui-col-md8">
+                <div id="IdMain" style="width: 600px;height:400px;margin-left: 40px;"></div>
+                <hr class="layui-bg-green">
+                <div class="layui-tab layui-tab-brief" lay-filter="docDemoTabBrief">
+                    <ul class="layui-tab-title wcq-li-menu">
+                        <li class="layui-this">语料收录情况</li>
+                        <li>语料清洗情况</li>
+                        <li>语料分词情况</li>
+                        <li>三元组抽取</li>
+                        <li>其它</li>
+                    </ul>
+                    <div class="layui-tab-content">
+                        <div class="layui-tab-item layui-show">
+                            <ul class="wcq-ul-msg" >
+                                <li th:each="up:${uploadop}" th:text="${up.operationContent}+${#dates.format(up.operationDate,'yyyy-MM-dd HH:mm:ss')}"></li>
+                            </ul>
+
+                        </div>
+                        <div class="layui-tab-item">
+                            <ul class="wcq-ul-msg" >
+                                <li  th:each="cle:${cleanop}" th:text="${cle.operationContent}+${#dates.format(cle.operationDate,'yyyy-MM-dd HH:mm:ss')}"></li>
+                            </ul>
+                        </div>
+                        <div class="layui-tab-item">
+                            <ul class="wcq-ul-msg">
+                                <li th:each="par:${participleop}" th:text="${par.operationContent}+${#dates.format(par.operationDate,'yyyy-MM-dd HH:mm:ss')}"> </li>
+                            </ul>
+                        </div>
+                        <div class="layui-tab-item">
+                            <ul class="wcq-ul-msg">
+                                <li th:each="thr:${threeop}" th:text="${thr.operationContent}+${#dates.format(thr.operationDate,'yyyy-MM-dd HH:mm:ss')}"></li>
+                            </ul>
+                        </div>
+                        <div class="layui-tab-item">
+                            <ul class="wcq-ul-msg">
+                                <li th:each="oth:${otherop}" th:text="${oth.operationContent}+${#dates.format(oth.operationDate,'yyyy-MM-dd HH:mm:ss')}"> </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!--右边-->
+            <div class="layui-col-md4">
+                <div class="layui-card">
+                    <div class="layui-card-header">
+                        <span style="font-size: 24px;">系统参数</span>
+                        <a class="layui-btn" th:href="@{/admin/main/1}"><i class="layui-icon layui-icon-refresh-3" style="font-size: 30px;"></i></a>
+                    </div>
+                    <div class="layui-card-body wcq-ul-msg">
+                        <span th:text="|原始语料:${sysMsgDto.originalItems}条|">原始语料：120条</span>
+                        <br>
+                        <span th:text="|细语料:${sysMsgDto.corpusItems}条|">细语料：300条</span>
+                        <br>
+                        <span th:text="|系统用户:${sysMsgDto.sysUsers}人|">系统用户：10人</span>
+                        <br>
+                        <span th:text="|系统访问量:${sysMsgDto.browseTimes}人次|">系统访问量：100次</span>
+                        <br>
+                        <span th:text="|当前在线用户:${sysMsgDto.onLineUsers}人|">当前在线用户：1人</span>
+                        <br>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <div class="layui-footer">
+        <!-- 底部固定区域 -->
+        © wcq.com
+    </div>
+</div>
+<script th:src="@{/layui/layui.js}"></script>
+<script>
+    layui.config({
+        base: '/echarts/' //这个就是你放echart.js的父目录
+    }).use(['layer','element','echarts'],function () {
+        var element = layui.element //元素操作
+            ,$= layui.jquery
+            ,echarts = layui.echarts;
+        $('#L_main').addClass("layui-this");
+        var myChart = echarts.init(document.getElementById('IdMain'));
+        var option = {
+            title: {
+                text: '语料周上传量'
+            },
+            tooltip: {},
+            legend: {
+                data:['日上传量']
+            },
+            xAxis: {
+                data: []
+            },
+            yAxis: {},
+            series: [{
+                name: '日上传量',
+                type: 'bar',
+                data: []
+            },
+                {
+                    name:'上传趋势',
+                    type: 'line',
+                    data: []
+                }]
+        };
+        //异步加载图标数据
+        $.ajax({
+            url: '/admin/main/ChartsDatas',
+            type: 'get',
+            dataType: 'json',
+            success: function (res) {
+                if (res.code == 0) {
+                    var xdata = res.data.xData,
+                        ydata = res.data.yData,
+                        ldata = res.data.lData;
+                    myChart.setOption(option);
+                    myChart.setOption({
+                        xAxis:{
+                            data:xdata
+                        },
+                        series: [{
+                            // 根据名字对应到相应的系列
+                            name: '日上传量',
+                            data: ydata
+                        },{
+                            name: '上传趋势',
+                            data: ldata
+                        }]
+                    });
+                } else {
+                    layer.msg("数据接口异常", {icon: 2, time: 2000, shade: 0.4});
+                }
+            }
+            ,error:function (response) {
+                var vv = response.responseText;
+                layer.msg(vv, {icon: 2, time: 5000, shade: 0.4},function(){
+                });
+            }
+        });
+    });
+</script>
+</body>
+</html>

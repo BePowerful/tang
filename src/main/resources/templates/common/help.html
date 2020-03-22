@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <title>语料分词</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="keywords" content="thang,唐卡,唐卡语料">
+    <meta name="description" content="唐卡语料系统">
+    <link rel="stylesheet" th:href="@{/layui/css/layui.css}">
+    <link rel="stylesheet" th:href="@{/css/global.css}">
+</head>
+<body>
+<div th:replace="common/comm :: nav"></div>
+<!-- 内容区 -->
+<div class="layui-container" style="margin-top: 15px;">
+    <div class="layui-row layui-col-space15">
+        <div class="layui-col-md12">
+            <div class="fly-panel"
+                 style="padding: 15px 30px 15px;min-height: 610px;margin-bottom: 0">
+                <h2 align="center">词性表</h2>
+                <hr class="layui-bg-cyan">
+                <table class="layui-table" lay-data="{url:'/help/cixinTable/', page:true, id:'test'}" lay-filter="test">
+                    <thead>
+                    <tr>
+                        <th lay-data="{field:'id', width:'10%', sort: true}">ID</th>
+                        <th lay-data="{field:'en', width:'20%'}">字母表示</th>
+                        <th lay-data="{field:'ch', width:'70%'}">实际意义</th>
+                    </tr>
+                    </thead>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+<div th:replace="common/comm :: foot"></div>
+<script th:src="@{/layui/layui.js}"></script>
+<script th:inline="none">
+    layui.use(['element','table'], function () {
+        var form = layui.form,
+            table = layui.table,
+            $ = layui.jquery,
+            element = layui.element;
+    });
+</script>
+</body>
+</html>
