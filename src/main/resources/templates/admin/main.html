@@ -120,12 +120,14 @@
                 }]
         };
         //异步加载图标数据
+        myChart.showLoading();
         $.ajax({
             url: '/admin/main/ChartsDatas',
             type: 'get',
             dataType: 'json',
             success: function (res) {
                 if (res.code == 0) {
+                    myChart.hideLoading();
                     var xdata = res.data.xData,
                         ydata = res.data.yData,
                         ldata = res.data.lData;

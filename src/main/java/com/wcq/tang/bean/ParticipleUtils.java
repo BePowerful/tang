@@ -194,31 +194,14 @@ public class ParticipleUtils {
      * @param content
      * @return
      */
-    public String analysis(String content){
-        String res = null;
+    public void analysis(String content){
         CoNLLSentence sentence = HanLP.parseDependency(content);
-        res = sentence.toString()+"\n";
+//        System.out.println(sentence);
         // 可以方便地遍历它
         for (CoNLLWord word : sentence)
         {
-            res += String.format("%s --(%s)--> %s\n", word.LEMMA, word.DEPREL, word.HEAD.LEMMA);
+            System.err.printf("%s --(%s)--> %s\n", word.LEMMA, word.DEPREL, word.HEAD.LEMMA);
         }
-        // 也可以直接拿到数组，任意顺序或逆序遍历
-//        CoNLLWord[] wordArray = sentence.getWordArray();
-//        for (int i = wordArray.length - 1; i >= 0; i--)
-//        {
-//            CoNLLWord word = wordArray[i];
-//            System.out.printf("%s --(%s)--> %s\n", word.LEMMA, word.DEPREL, word.HEAD.LEMMA);
-//        }
-        // 还可以直接遍历子树，从某棵子树的某个节点一路遍历到虚根
-        CoNLLWord[] wordArray = sentence.getWordArray();
-        CoNLLWord head = wordArray[12];
-        while ((head = head.HEAD) != null)
-        {
-            if (head == CoNLLWord.ROOT) System.out.println(head.LEMMA);
-            else res+=String.format("%s --(%s)--> ", head.LEMMA, head.DEPREL);
-        }
-        return res;
     }
 
     /**
